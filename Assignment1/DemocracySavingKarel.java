@@ -1,6 +1,4 @@
 /*
- * Dit programma zorgt voor een eerlijke verkiezing. Karel verzekerd dat de ponskaartjes
- * op de juist manier worden gecontroleerd! HELL YEAH DEMOCRACY BITCH!
  * DemocracySavingKarel.java
  * Author: Kyle Adams
  * 

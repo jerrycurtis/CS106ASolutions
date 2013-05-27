@@ -1,16 +1,16 @@
 /*
  * File: CheckerboardKarel.java
  * ----------------------------
- * The CheckerboardKarel class draws a checkerboard using beepers. Karel drops a beeper on each "even" position
- * and skips the "odd" positions. This solution has an even() and odd() method that call each other.
+ * Author: Coding Kyle
+ * This solution should work for EVERY world Karel is put in.
+ * Edited out some none working else part, left it to learn from. ;)
  */
 
 import stanford.karel.*;
  
 public class CheckerboardKarel extends SuperKarel {
 
-	//Still has a bug. Boards with odd number of rows will not finish.
-	//Update: bug fixed, however, Karel will be blocked sometimes. New Bug!!! YUKKK!
+	
     public void run() {
     	putBeeper();
     	while (facingEast()){

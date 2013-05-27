@@ -11,9 +11,7 @@
 import stanford.karel.*;
 
 public class StoneMasonKarel extends SuperKarel {
-/**
- * Karel krijgt nu het commando om te kijken waar hij dingen bij moet vullen
- */
+
 	public void run() 
 	{
 		FillCurrentRow();
@@ -23,10 +21,7 @@ public class StoneMasonKarel extends SuperKarel {
 			FillCurrentRow();
 		}
 	}
-/**
- * Commando om Karel de huidige rij volledig te vullen met stenen. Eerst kijkt hij of er een steen aanwezig is.
- * Zo niet, dan plaats Karel een steen. Dit om te voorkomen dat er twee stenen geplaatst worden.
- */
+
 	private void FillCurrentRow() 
 	{
 		turnLeft();
