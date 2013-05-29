@@ -31,7 +31,10 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == namefield || e.getSource() == graph) {
-			println("Graph: \"" + namefield.getText() + "\"");
+			NameSurferEntry decadeRanking = namesdb.findEntry(namefield.getText());
+			if (decadeRanking != null) {
+				println("Graph: " + decadeRanking.toString());
+			}
 		} else if ( e.getSource() == clear) {
 			println("Clear");
 		}
@@ -53,5 +56,5 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 	private JTextField namefield;
 	private JButton graph;
 	private JButton clear;
-
+	private NameSurferDataBase namesdb = new NameSurferDataBase(NAMES_DATA_FILE);
 }

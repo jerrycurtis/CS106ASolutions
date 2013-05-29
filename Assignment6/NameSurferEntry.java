@@ -57,11 +57,13 @@ public class NameSurferEntry implements NameSurferConstants {
  * NameSurferEntry.
  */
 	public String toString() {
-		String entryValue = "\"" + firstName + " [";
+		String entryValue = "\"" + firstName + " ";
 		for (int j = 0;j < NDECADES ; j++) {
-			entryValue += getRank(j) + " ";
+			entryValue += getRank(j);
+			//update: add a space if it's not the last digit.
+			if (j < NDECADES - 1) entryValue += " ";
 		}
-		entryValue += "]\"";
+		entryValue += "]";
 		return entryValue;
 	}
 
