@@ -10,7 +10,11 @@ import java.awt.event.*;
 import javax.swing.*;
 
 //Changed Program to ConsoleProgram
-public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
+public class NameSurfer extends Program implements NameSurferConstants {
+	
+	public static void main(String[] args) {
+	    new NameSurfer().start(args);
+	}
 
 /* Method: init() */
 /**
@@ -18,9 +22,11 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  * and initializing the interactors at the bottom of the window.
  */
 	public void init() {
-		setSize(APPLICATION_WIDTH - 100, APPLICATION_HEIGHT - 400);
+		setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 	    initializeInteractors();
 	    addActionListeners();
+	    display = new NameSurferGraph();
+	    add(display);
 	}
 
 /* Method: actionPerformed(e) */
@@ -31,12 +37,17 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == namefield || e.getSource() == graph) {
+			/*
+			 * Milestone 1 code:
+			 * println("Graph: " + namefield.getEntry());
+			 */
 			NameSurferEntry decadeRanking = namesdb.findEntry(namefield.getText());
 			if (decadeRanking != null) {
-				println("Graph: " + decadeRanking.toString());
-			}
+				display.addEntry(decadeRanking);
+				display.update();			}
 		} else if ( e.getSource() == clear) {
-			println("Clear");
+			display.clear();
+			display.update();
 		}
 	}
 
@@ -44,7 +55,7 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 		JLabel name = new JLabel("Name");
 		namefield = new JTextField(20);
 		graph = new JButton("Graph");
-		clear = new JButton("Graph");
+		clear = new JButton("Clear");
 		
 		add(name, SOUTH);
 		add(namefield, SOUTH);
@@ -56,5 +67,6 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 	private JTextField namefield;
 	private JButton graph;
 	private JButton clear;
+	private NameSurferGraph display;
 	private NameSurferDataBase namesdb = new NameSurferDataBase(NAMES_DATA_FILE);
 }
