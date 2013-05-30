@@ -85,6 +85,15 @@ public class FacePamphlet extends ConsoleProgram
 		else if (e.getSource() == friendfield || e.getActionCommand().equals("Add Friend")) {
 			updateFriend();
 		}
+		else if (e.getActionCommand().equals("Add")) {
+			//addName();
+		}
+		else if (e.getActionCommand().equals("Delete")) {
+			//deleteName();
+		}
+		else if (e.getActionCommand().equals("Lookup")) {
+			//friendLookup();
+		}
 			
 	}
     
