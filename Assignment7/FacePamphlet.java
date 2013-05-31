@@ -20,6 +20,9 @@ public class FacePamphlet extends ConsoleProgram
 	private JTextField picturefield;
 	private JButton friendbutton;
 	private JTextField friendfield;
+	private JTextField namefield;
+	private FacePamphletProfile currentprofile = null;
+	private FacePamphletDatabase profiles = new FacePamphletDatabase();
 	
 	public static void main(String[] args) {
 	    new FacePamphlet().start(args);
@@ -55,7 +58,7 @@ public class FacePamphlet extends ConsoleProgram
 		
 		//Inits the NORTH interactors
 		JLabel namelabel = new JLabel("Name");
-		JTextField namefield = new JTextField(TEXT_FIELD_SIZE);
+		namefield = new JTextField(TEXT_FIELD_SIZE);
 		JButton add_button = new JButton("Add");
 		JButton delete_button = new JButton("Delete");
 		JButton lookup_button = new JButton("Lookup");
@@ -78,38 +81,122 @@ public class FacePamphlet extends ConsoleProgram
     public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == statusfield || e.getActionCommand().equals("Change Status")) {
 			updateStatus();
+			showCurrentProfile();
 		}
 		else if (e.getSource() == picturefield || e.getActionCommand().equals("Change Picture")) {
 			updatePicture();
+			showCurrentProfile();
 		}
 		else if (e.getSource() == friendfield || e.getActionCommand().equals("Add Friend")) {
 			updateFriend();
+			showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Add")) {
-			//addName();
+			addName();
+			showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Delete")) {
-			//deleteName();
+			deleteName();
+			showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Lookup")) {
-			//friendLookup();
+			lookUpName();
+			showCurrentProfile();
 		}
 			
 	}
     
+    private void showCurrentProfile() {
+    	if (currentprofile != null) {
+    		String currentProfileName = currentprofile.getName();
+    		println("--> Current profile: " +  profiles.getProfile(currentProfileName).toString());
+    	} else {
+    		println("--> No current profile");
+    	}
+    }
+    
     private void updateStatus() {
     	String status = statusfield.getText();
-    	println("Status: " + status);
+    	if (currentprofile != null) {
+    		currentprofile.setStatus(status);
+    		println("Status update to "+ currentprofile.getStatus());
+    	} else {
+    		println("Please select a profile to change status");
+    	}
     }
     
     private void updatePicture() {
-    	String status = statusfield.getText();
-    	println("Picture: " + status);
+    	String filename = picturefield.getText();
+    	if (currentprofile != null) {
+    		GImage picture = null;
+    		try {
+    			picture = new GImage(filename);
+    			println("Image updated!");
+    		} catch (ErrorException ex) {
+    			println("Cannot open image");
+    		}
+    	} else {
+    		println("Please select a profile to change image");
+    	}
     }
     
     private void updateFriend() {
-    	String status = statusfield.getText();
-    	println("Friend: " + status);
+    	String friend = friendfield.getText();
+    	if (currentprofile != null) {
+    		if (profiles.containsProfile(friend)) {
+    			//Write code to add friend to both profiles
+    			if (currentprofile.addFriend(friend)) {
+    				//Friend added, now have to do that vice versa
+    				FacePamphletProfile friendprofile = profiles.getProfile(friend);
+    				friendprofile.addFriend(currentprofile.getName());
+    				println("Added as a friend: " + friend);
+    			}
+    			else {
+    				println("You're already friends! Good times!");
+    			}
+    		//Profile does not exist!
+    		} else {
+    			println("No profile with name: " + friend);
+    	//Input name does not exist in database!
+    	} 
+    		}
+    	else {
+    		println("Please select a profile to add friend");
+    	}
+    	
+    }
+    
+    private void addName() {
+    	String addname = namefield.getText();
+    	if (profiles.containsProfile(addname)) {
+    		println("Profile for " + addname + " already excists: " + profiles.getProfile(addname).toString());
+    	} else {
+    		FacePamphletProfile profile = new FacePamphletProfile(addname);
+    		currentprofile = profile;
+    		profiles.addProfile(profile);
+    		println("Add: new profile: " + profiles.getProfile(addname).toString());
+    	}
+    }
+    
+    private void deleteName() {
+    	String deletename = namefield.getText();
+    	if (profiles.containsProfile(deletename)) {
+    		profiles.deleteProfile(deletename);
+    		println("Delete: profile of " + deletename + " deleted.");
+    		currentprofile = null;
+    	} else {
+    		println("Delete: profile with name " + deletename + " does not exist.");
+    	}
+    }
+    
+    private void lookUpName() {
+    	String lookupname = namefield.getText();
+    	if (profiles.containsProfile(lookupname)) {
+    		println("Lookup: " + profiles.getProfile(lookupname).toString());
+    		currentprofile = profiles.getProfile(lookupname);
+    	} else {
+    		println("Lookup: profile with name " +lookupname+ " does not exist.");
+    	}
     }
 
 }
