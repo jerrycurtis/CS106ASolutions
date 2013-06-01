@@ -16,7 +16,7 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	private String name;
 	private GImage picture;
 	private String status;
-	private ArrayList<String> friends = new ArrayList<String>();
+	private ArrayList<String> friends;
 	
 	/** 
 	 * Constructor
@@ -27,6 +27,7 @@ public class FacePamphletProfile implements FacePamphletConstants {
 		this.name = name;
 		picture = null;
 		status = "No status yet!";
+		friends = new ArrayList<String>();
 	}
 
 	/** This method returns the name associated with the profile. */ 
@@ -76,12 +77,13 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * a second time.)
 	 */
 	public boolean addFriend(String friend) {
-        if (friends.contains(friend)) {
-        	return false;
-        } else {
-        	friends.add(friend);
-        	return true;
-        }
+		if (friends.contains(friend)) {
+			return false;
+		}
+		else {
+			friends.add(friend);
+			return true;
+		}
 	}
 
 	/** 
@@ -105,8 +107,8 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * This method returns an iterator over the list of friends 
 	 * associated with the profile.
 	 */ 
-	public ArrayList<String> getFriends() {
-		return friends;
+	public Iterator<String> getFriends() {
+		return friends.iterator();
 	}
 	
 	/** 
@@ -121,11 +123,12 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * would return the string: "Alice (coding): Don, Chelsea, Bob"
 	 */ 
 	public String toString() {
-		String profileInfo = "/" + name + " (" + status + "): ";
-		for (int i = 0; i < friends.size(); i++)
-			profileInfo += friends.get(i) + ", ";
-		profileInfo = profileInfo.substring(0, profileInfo.length() - 2) + "/";
-		return profileInfo;
+		String string = "" + name + " (" + status + "): ";
+		while (getFriends().hasNext()) {
+			string += getFriends().next() + ", ";
+		}
+		
+		return string;
 	}
 	
 }

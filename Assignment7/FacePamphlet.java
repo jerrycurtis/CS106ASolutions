@@ -9,8 +9,6 @@ import acm.program.*;
 import acm.graphics.*;
 import acm.util.*;
 import java.awt.event.*;
-import java.util.Iterator;
-
 import javax.swing.*;
 
 public class FacePamphlet extends ConsoleProgram 
@@ -90,7 +88,7 @@ public class FacePamphlet extends ConsoleProgram
 			showCurrentProfile();
 		}
 		else if (e.getSource() == friendfield || e.getActionCommand().equals("Add Friend")) {
-			addFriend();
+			updateFriend();
 			showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Add")) {
@@ -144,48 +142,29 @@ public class FacePamphlet extends ConsoleProgram
     
     private void updateFriend() {
     	String friend = friendfield.getText();
-    	//If there is no profile:
-    	if (currentprofile == null) {
-    		println("Add friend: No profile selected. Please select a profile to add friend");
-    		return;
-    	}
-    	//If input does not exist
-    	if (profiles.containsProfile(friend) == false) {
-    		println("Add friend: profile " + friend + " does not exist!");
-    		return;
+    	if (currentprofile != null) {
+    		if (profiles.containsProfile(friend)) {
+    			//Write code to add friend to both profiles
+    			if (currentprofile.addFriend(friend)) {
+    				//Friend added, now have to do that vice versa
+    				FacePamphletProfile friendprofile = profiles.getProfile(friend);
+    				friendprofile.addFriend(currentprofile.getName());
+    				println("Added as a friend: " + friend);
+    			}
+    			else {
+    				println("You're already friends! Good times!");
+    			}
+    		//Profile does not exist!
+    		} else {
+    			println("No profile with name: " + friend);
+    	//Input name does not exist in database!
+    	} 
     		}
-    	//Own name...
-    	
-    	if (currentprofile.getName().equals(friend)) {
-    		println("You are already friends with yourself! FOR LIFE!");
-    		return;
-    	}
-        FacePamphletProfile friendProfile = profiles.getProfile(friend);
-        //checks to see if the user is already friends with the friend name entered
-      
-        //if the user and the friend entered are not friends, makes them friends
-        if(currentprofile.addFriend(friend) == true) {
-        friendProfile.addFriend(currentprofile.getName());
-        
-        println(friend + " added as a friend.");
-        } else {
-    		println("Still happy");
+    	else {
+    		println("Please select a profile to add friend");
     	}
     	
     }
-    
-    private void addFriend() {
-    	String newFriend = friendfield.getText();
-    	if (!currentprofile.getFriends().contains(newFriend)) {
-    	currentprofile.getFriends().add(newFriend);
-    	//finds the newly added friend's profile, gets his/her list of friends, and adds the current user's (adder's) name to that list
-    	profiles.getProfile(newFriend).getFriends().add(currentprofile.getName());
-    	//FacePamphletCanvas.displayProfile(currentprofile);
-    	println(newFriend + " has been added as a friend.");
-    	} else {
-    	println(currentprofile.getName() + " is already friends with " + newFriend);
-    	}
-    	}
     
     private void addName() {
     	String addname = namefield.getText();
@@ -193,8 +172,8 @@ public class FacePamphlet extends ConsoleProgram
     		println("Profile for " + addname + " already excists: " + profiles.getProfile(addname).toString());
     	} else {
     		FacePamphletProfile profile = new FacePamphletProfile(addname);
+    		currentprofile = profile;
     		profiles.addProfile(profile);
-    		currentprofile = profiles.getProfile(addname);
     		println("Add: new profile: " + profiles.getProfile(addname).toString());
     	}
     }
