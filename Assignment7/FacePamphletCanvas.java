@@ -20,7 +20,8 @@ public class FacePamphletCanvas extends GCanvas
 	 * the display
 	 */
 	public FacePamphletCanvas() {
-		// You fill this in
+		//Inits the first applicationMessage (blank)
+		add(applicationMessage);
 	}
 
 	
@@ -31,7 +32,11 @@ public class FacePamphletCanvas extends GCanvas
 	 * passed in.
 	 */
 	public void showMessage(String msg) {
-		// You fill this in
+		remove(applicationMessage);
+		applicationMessage = new GLabel(msg);
+		applicationMessage.setFont(MESSAGE_FONT);
+		applicationMessage.setLocation((getWidth() - applicationMessage.getWidth()) / 2, getHeight() - BOTTOM_MESSAGE_MARGIN);
+        add(applicationMessage);
 	}
 	
 	
@@ -45,8 +50,62 @@ public class FacePamphletCanvas extends GCanvas
 	 * the user, and a list of the user's friends in the social network.
 	 */
 	public void displayProfile(FacePamphletProfile profile) {
-		// You fill this in
+		removeAll();
+		displayName(profile);
+		displayStatus(profile);
+		displayImage(profile);
+		displayFriends(profile);
+	}
+	
+	private void displayName(FacePamphletProfile profile) {
+		String name = profile.getName();
+		namelabel = new GLabel(name);
+		namelabel.setLocation(LEFT_MARGIN, TOP_MARGIN + namelabel.getAscent());
+		namelabel.setColor(Color.blue);
+		namelabel.setFont(PROFILE_NAME_FONT);
+		add(namelabel);
+	}
+	
+	private void displayImage(FacePamphletProfile profile) {
+		GPoint imageStartPoint = new GPoint(LEFT_MARGIN, TOP_MARGIN + (IMAGE_MARGIN * 2));
+		if (profile.getImage() == null) {
+		GRect no_image = new GRect(imageStartPoint.getX(), imageStartPoint.getY(), IMAGE_WIDTH, IMAGE_HEIGHT);
+		add(no_image);
+		} else {
+			GImage profilepicture = profile.getImage();
+			profilepicture.setLocation(imageStartPoint.getX(), imageStartPoint.getY());
+			profilepicture.setSize(IMAGE_WIDTH, IMAGE_HEIGHT);
+			add(profilepicture);
+		}
+	}
+	
+	private void displayStatus(FacePamphletProfile profile) {
+		String status = profile.getStatus();
+		if (status == "") status = "No current status";
+		GLabel statuslabel = new GLabel(status);
+		statuslabel.setLocation(LEFT_MARGIN, TOP_MARGIN + namelabel.getHeight() + IMAGE_MARGIN + IMAGE_HEIGHT + IMAGE_MARGIN);
+		statuslabel.setFont(PROFILE_STATUS_FONT);
+		add(statuslabel);
+		}
+	
+	private void displayFriends(FacePamphletProfile profile) {
+		double x = getWidth() / 2;
+		double y = TOP_MARGIN + (IMAGE_MARGIN *2);
+		GLabel friendheader = new GLabel("Friends: ");
+		friendheader.setFont(PROFILE_FRIEND_LABEL_FONT);
+		friendheader.setLocation(x, y);
+		add(friendheader);
+		double y_friend = TOP_MARGIN + (IMAGE_MARGIN *2) + friendheader.getHeight();
+		for ( int i = 0; i < profile.getFriends().size(); i ++) {
+			String friend = profile.getFriends().get(i);
+			friendlabel = new GLabel(friend, x, y_friend);
+			friendlabel.setFont(PROFILE_FRIEND_FONT);
+			add(friendlabel);
+			y_friend += friendlabel.getHeight();
+		}
 	}
 
-	
+	private GLabel applicationMessage = new GLabel("");
+	private GLabel namelabel;
+	private GLabel friendlabel;
 }

@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 import javax.swing.*;
 
-public class FacePamphlet extends ConsoleProgram 
+public class FacePamphlet extends Program 
 					implements FacePamphletConstants {
 	
 	private JButton statusbutton;
@@ -25,6 +25,7 @@ public class FacePamphlet extends ConsoleProgram
 	private JTextField namefield;
 	private FacePamphletProfile currentprofile = null;
 	private FacePamphletDatabase profiles = new FacePamphletDatabase();
+	private FacePamphletCanvas canvas;
 	
 	public static void main(String[] args) {
 	    new FacePamphlet().start(args);
@@ -72,6 +73,8 @@ public class FacePamphlet extends ConsoleProgram
 		add(lookup_button, NORTH);
 		
 		addActionListeners();
+		canvas = new FacePamphletCanvas();
+		add(canvas);
     } 
     
   
@@ -83,47 +86,39 @@ public class FacePamphlet extends ConsoleProgram
     public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == statusfield || e.getActionCommand().equals("Change Status")) {
 			updateStatus();
-			showCurrentProfile();
+			//showCurrentProfile();
 		}
 		else if (e.getSource() == picturefield || e.getActionCommand().equals("Change Picture")) {
 			updatePicture();
-			showCurrentProfile();
+			//showCurrentProfile();
 		}
 		else if (e.getSource() == friendfield || e.getActionCommand().equals("Add Friend")) {
 			addFriend();
-			showCurrentProfile();
+			//showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Add")) {
 			addName();
-			showCurrentProfile();
+			//showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Delete")) {
 			deleteName();
-			showCurrentProfile();
+			//showCurrentProfile();
 		}
 		else if (e.getActionCommand().equals("Lookup")) {
 			lookUpName();
-			showCurrentProfile();
+			//showCurrentProfile();
 		}
 			
 	}
-    
-    private void showCurrentProfile() {
-    	if (currentprofile != null) {
-    		String currentProfileName = currentprofile.getName();
-    		println("--> Current profile: " +  profiles.getProfile(currentProfileName).toString());
-    	} else {
-    		println("--> No current profile");
-    	}
-    }
     
     private void updateStatus() {
     	String status = statusfield.getText();
     	if (currentprofile != null) {
     		currentprofile.setStatus(status);
-    		println("Status update to "+ currentprofile.getStatus());
+    		canvas.displayProfile(currentprofile);
+    		canvas.showMessage("Status updated!");
     	} else {
-    		println("Please select a profile to change status");
+    		canvas.showMessage("Please select a profile to change status");
     	}
     }
     
@@ -132,46 +127,16 @@ public class FacePamphlet extends ConsoleProgram
     	if (currentprofile != null) {
     		GImage picture = null;
     		try {
-    			picture = new GImage(filename);
-    			println("Image updated!");
+    			picture = new GImage("images/" + filename);
+    			currentprofile.setImage(picture);
+    			canvas.displayProfile(currentprofile);
+    			canvas.showMessage("Image updated!");
     		} catch (ErrorException ex) {
-    			println("Cannot open image");
+    			canvas.showMessage("Cannot open image");
     		}
     	} else {
-    		println("Please select a profile to change image");
+    		canvas.showMessage("Please select a profile to change image");
     	}
-    }
-    
-    private void updateFriend() {
-    	String friend = friendfield.getText();
-    	//If there is no profile:
-    	if (currentprofile == null) {
-    		println("Add friend: No profile selected. Please select a profile to add friend");
-    		return;
-    	}
-    	//If input does not exist
-    	if (profiles.containsProfile(friend) == false) {
-    		println("Add friend: profile " + friend + " does not exist!");
-    		return;
-    		}
-    	//Own name...
-    	
-    	if (currentprofile.getName().equals(friend)) {
-    		println("You are already friends with yourself! FOR LIFE!");
-    		return;
-    	}
-        FacePamphletProfile friendProfile = profiles.getProfile(friend);
-        //checks to see if the user is already friends with the friend name entered
-      
-        //if the user and the friend entered are not friends, makes them friends
-        if(currentprofile.addFriend(friend) == true) {
-        friendProfile.addFriend(currentprofile.getName());
-        
-        println(friend + " added as a friend.");
-        } else {
-    		println("Still happy");
-    	}
-    	
     }
     
     private void addFriend() {
@@ -180,22 +145,23 @@ public class FacePamphlet extends ConsoleProgram
     	currentprofile.getFriends().add(newFriend);
     	//finds the newly added friend's profile, gets his/her list of friends, and adds the current user's (adder's) name to that list
     	profiles.getProfile(newFriend).getFriends().add(currentprofile.getName());
-    	//FacePamphletCanvas.displayProfile(currentprofile);
-    	println(newFriend + " has been added as a friend.");
+    	canvas.displayProfile(currentprofile);
+    	canvas.showMessage(newFriend + " has been added as a friend.");
     	} else {
-    	println(currentprofile.getName() + " is already friends with " + newFriend);
+    	canvas.showMessage(currentprofile.getName() + " is already friends with " + newFriend);
     	}
     	}
     
     private void addName() {
     	String addname = namefield.getText();
     	if (profiles.containsProfile(addname)) {
-    		println("Profile for " + addname + " already excists: " + profiles.getProfile(addname).toString());
+    		canvas.showMessage("A profile with the name " + addname + " already exists");
     	} else {
     		FacePamphletProfile profile = new FacePamphletProfile(addname);
     		profiles.addProfile(profile);
     		currentprofile = profiles.getProfile(addname);
-    		println("Add: new profile: " + profiles.getProfile(addname).toString());
+    		canvas.displayProfile(currentprofile);
+    		canvas.showMessage("New profile created");
     	}
     }
     
@@ -203,20 +169,22 @@ public class FacePamphlet extends ConsoleProgram
     	String deletename = namefield.getText();
     	if (profiles.containsProfile(deletename)) {
     		profiles.deleteProfile(deletename);
-    		println("Delete: profile of " + deletename + " deleted.");
     		currentprofile = null;
+    		canvas.removeAll();
+    		canvas.showMessage("Deleted " + deletename);
     	} else {
-    		println("Delete: profile with name " + deletename + " does not exist.");
+    		canvas.showMessage("Cannot delete: profile with name " + deletename + " does not exist.");
     	}
     }
     
     private void lookUpName() {
     	String lookupname = namefield.getText();
     	if (profiles.containsProfile(lookupname)) {
-    		println("Lookup: " + profiles.getProfile(lookupname).toString());
     		currentprofile = profiles.getProfile(lookupname);
+    		canvas.displayProfile(currentprofile);
+    		canvas.showMessage("Displaying" + lookupname);		
     	} else {
-    		println("Lookup: profile with name " +lookupname+ " does not exist.");
+    		canvas.showMessage("Profile with name " +lookupname+ " does not exist.");
     	}
     }
 
