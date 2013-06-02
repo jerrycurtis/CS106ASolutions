@@ -70,6 +70,9 @@ public class FacePamphletCanvas extends GCanvas
 		GPoint imageStartPoint = new GPoint(LEFT_MARGIN, TOP_MARGIN + (IMAGE_MARGIN * 2));
 		if (profile.getImage() == null) {
 		GRect no_image = new GRect(imageStartPoint.getX(), imageStartPoint.getY(), IMAGE_WIDTH, IMAGE_HEIGHT);
+		GLabel no_image_label = new GLabel("No Image");
+		no_image_label.setLocation(imageStartPoint.getX() + (no_image.getWidth()/2) - (no_image_label.getWidth() / 2), imageStartPoint.getY() - (no_image.getHeight() /2 ));
+		add(no_image_label);
 		add(no_image);
 		} else {
 			GImage profilepicture = profile.getImage();

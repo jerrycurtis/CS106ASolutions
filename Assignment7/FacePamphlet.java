@@ -114,7 +114,7 @@ public class FacePamphlet extends Program
     private void updateStatus() {
     	String status = statusfield.getText();
     	if (currentprofile != null) {
-    		currentprofile.setStatus(status);
+    		currentprofile.setStatus(currentprofile.getName() + " is " + status);
     		canvas.displayProfile(currentprofile);
     		canvas.showMessage("Status updated!");
     	} else {
@@ -182,7 +182,7 @@ public class FacePamphlet extends Program
     	if (profiles.containsProfile(lookupname)) {
     		currentprofile = profiles.getProfile(lookupname);
     		canvas.displayProfile(currentprofile);
-    		canvas.showMessage("Displaying" + lookupname);		
+    		canvas.showMessage("Displaying " + lookupname);		
     	} else {
     		canvas.showMessage("Profile with name " +lookupname+ " does not exist.");
     	}
